@@ -4,5 +4,7 @@
  */
 
 function search(list, item) {
-    throw new Error("Implement me!");
+    throw new Error("Not implemented!");
 }
+
+module.exports = search;
