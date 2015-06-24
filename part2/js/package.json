@@ -1,0 +1,13 @@
+{
+  "name": "summertalks",
+  "version": "1.0.0",
+  "description": "Summer talks exercises. Part 2.",
+  "scripts": {
+    "test": "mocha tests.js"
+  },
+  "author": "Chuy Del Castillo",
+  "license": "ISC",
+  "devDependencies": {
+    "mocha": "^2.2.5"
+  }
+}
