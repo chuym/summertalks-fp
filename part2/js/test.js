@@ -53,3 +53,57 @@ describe("Exercise #1 - Functors", function () {
     });
 
 });
+
+describe("Exercise #2 - Applicative Functors", function () {
+    describe("List Applicative Functor", function () {
+        it("List should be an instance of Functor");
+        it("List should be an instance of Applicative");
+        it("List should implement pure");
+        it("A list should be returned by pure.");
+        it("applicate function should be implemented");
+        it("applicate function should create a new list with each item of the provided list applied with the applicative list functions");
+        it("applicate should not modify any of its inputs");
+    });
+
+    describe("Array Applicative Functor", function () {
+        it("Array should be an instance of Functor");
+        it("Array should be an instance of Applicative");
+        it("Array should implement pure");
+        it("An array should be returned by pure.");
+        it("applicate function should be implemented");
+        it("applicate function should create a new array with each item of the provided array applied with each applicative array functions");
+        it("applicate should not modify any of its inputs");
+    });
+});
+
+describe("Exercise #3 - Monads", function () {
+    describe("Maybe Monad", function () {
+        it("Maybe should be an instance of Functor");
+        it("Maybe should be an instance of Applicative");
+        it("Maybe should be an instance of Monad");
+
+
+        it("Maybe implement ret function");
+        it("Maybe ret function returns a 'just' maybe for any value other than null");
+        it("Maybe ret function returns a 'nothing' maybe for null");
+
+        it("Maybe implement bind function");
+        it("Maybe bind should execute properly for a 'just' maybe");
+        it("Maybe bind should execute properly for a 'nothing' maybe");
+    });
+
+    describe("Promise Monad", function () {
+        it("Promise should be an instance of Functor");
+        it("Promise should be an instance of Applicative");
+        it("Promise should be an instance of Monad");
+
+        it("Promise implement ret function");
+        it("Promise ret function returns a 'just' maybe for any value other than null");
+        it("Promise ret function returns a 'nothing' maybe for null");
+
+        it("Promise implement bind function");
+        it("Promise bind should execute properly for a broken promise");
+        it("Promise bind should execute properly for a non-resolved promise");
+        it("Promise bind should execute properly for a resolved promise");
+    });
+});
