@@ -1,5 +1,7 @@
 var assert = require("assert"),
-    adt = require("ex1");
+    Functors = require("./ex1"),
+    Applicatives = require("./ex2"),
+    Monads = require("./ex3");
 
 describe("Exercise #1 - Functors", function () {
     describe("List Functor", function () {

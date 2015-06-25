@@ -28,7 +28,7 @@ module.exports.newTree = function (node, left, right) {
     throw new Error("Not Implemented");
 };
 
-module.exports.newGraph = (node, vertices) {
+module.exports.newGraph = function (node, vertices) {
     throw new Error("Not Implemented");
 };
 
