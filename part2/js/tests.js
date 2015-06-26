@@ -252,23 +252,188 @@ describe("Exercise #1 - Functors", function () {
 
 describe("Exercise #2 - Applicative Functors", function () {
     describe("List Applicative Functor", function () {
-        it("List should be an instance of Functor");
-        it("List should be an instance of Applicative");
-        it("List should implement pure");
-        it("A list should be returned by pure.");
-        it("applicate function should be implemented");
-        it("applicate function should create a new list with each item of the provided list applied with the applicative list functions");
-        it("applicate should not modify any of its inputs");
+        it("List should be an instance of Functor", function () {
+            assert.equal(Functors.List instanceof Functors.Functor, true)
+        });
+
+        it("List should be an instance of Applicative", function () {
+            assert.equal(Functors.List instanceof Applicatives.Applicative, true)
+        });
+
+        it("List should implement pure", function () {
+            assert.doesNotThrow(Applicative.List.pure);
+        });
+
+        it("A list should be returned by pure.", function () {
+            var pure = Applicative.List.pure(function () { console.log("Hello World!"); });
+            assert(pure instanceof Applicatives.List);
+        });
+
+        it("applicate function should be implemented", function () {
+            var list = Applicative.List.pure(1),
+                square = Applicative.List.pure(function (x) { return x*x; });
+
+            assert.doesNotThrow(Applicative.applicate(square, list));
+        });
+
+        it("applicate function should create a new list with each item of the provided list applied with the applicative list functions", function () {
+            var list = Applicative.List.pure(1),
+                square = Applicative.List.pure(function (x) { return x*x; }),
+                applicated,
+                next;
+
+            list = [2,3,4,5].map(function (i) {
+                return Appicative.List.pure(i);
+            }).reduce(function (previous, current) {
+                return Functor.link(previous, current);
+            }, list);
+
+            applicated = Applicative.applicate(square, list);
+
+            assert.equal(applicated.next, null);
+            assert(applicated.node instanceof Applicated.List);
+            assert.equal(applicated.node.node, 1);
+
+            next = next.next;
+            assert.equal(next.node, 4);
+
+            next = next.next;
+            assert.equal(next.node, 9);
+
+            next = next.next;
+            assert.equal(next.node, 12);
+
+            next = next.next;
+            assert.equal(next.node, 25);
+            assert.equal(next.next, null);
+        });
+
+        it("applicate function should create a new list with each item of the provided list applied with the applicative list with multiple functions", function () {
+            var list = Applicative.List.pure(1),
+                twice = ApplicativeList.pure(function (x) { return x*2 }),
+                square = Applicative.List.pure(function (x) { return x*x; }),
+                applicated,
+                applicatedNext,
+                next;
+
+            functions = Functor.link(square, twice);
+
+            list = [2,3,4,5].map(function (i) {
+                return Appicative.List.pure(i);
+            }).reduce(function (previous, current) {
+                return Functor.link(previous, current);
+            }, list);
+
+            applicated = Applicative.applicate(functions, list);
+
+            assert(applicated.node instanceof Applicated.List);
+            assert(applicated.node.next instanceof Applicated.List);
+
+            assert.equal(applicated.node.node, 1);
+
+            next = applicated.node.node.next;
+            assert.equal(next.node, 4);
+
+            next = applicated.node.node.next;
+            assert.equal(next.node, 9);
+
+            next = applicated.node.node.next;
+            assert.equal(next.node, 12);
+
+            next = applicated.node.node.next;
+            assert.equal(next.node, 25);
+            assert.equal(next.next, null);
+
+            applicatedNext = applicated.node.next;
+
+            assert.equal(applicatedNext.node.node, 2);
+
+            next = next.next;
+            assert.equal(next.node, 4);
+
+            next = next.next;
+            assert.equal(next.node, 6);
+
+            next = next.next;
+            assert.equal(next.node, 8);
+
+            next = next.next;
+            assert.equal(next.node, 10);
+            assert.equal(next.next, null);
+
+        });
+
+        it("applicate should not modify any of its inputs", function () {
+            var list = Applicative.List.pure(1),
+                square = Applicative.List.pure(function (x) { return x+x; }),
+                applicated,
+                next;
+
+            list = [2,3,4,5].map(function (i) {
+                return Appicative.List.pure(i);
+            }).reduce(function (previous, current) {
+                return Functor.link(previous, current);
+            }, list);
+
+            applicated = Applicative.applicate(square, list);
+
+            assert.notDeepEqual(list, applicated);
+        });
+
     });
 
     describe("Array Applicative Functor", function () {
-        it("Array should be an instance of Functor");
-        it("Array should be an instance of Applicative");
-        it("Array should implement pure");
-        it("An array should be returned by pure.");
-        it("applicate function should be implemented");
-        it("applicate function should create a new array with each item of the provided array applied with each applicative array functions");
-        it("applicate should not modify any of its inputs");
+
+        it("Array should implement pure", function () {
+            assert.doesNotThrow(Applicative.Array.pure);
+        });
+
+        it("An array should be returned by pure.", function () {
+            var array = Applicative.Array.pure(1);
+
+            assert(array instanceof Array);
+        });
+
+        it("applicate function should be implemented", function () {
+            var array = Applicative.Array.pure(1),
+                functions = Applicative.Array.pure(function (x) { return x*x; });
+
+            [2,3,4,5].forEach(function (i) {
+                array.push(i);
+            });
+
+            functions.push(function (x) { return x+x; });
+
+            assert.doesNotThrow(Applicative.applicate(functions, array));
+        });
+
+        it("applicate function should create a new array with each item of the provided array applied with each applicative array functions", function () {
+            var array = Applicative.Array.pure(1),
+                functions = Applicative.Array.pure(function (x) { return x*x; }),
+                applicated;
+
+            [2,3,4,5].forEach(function (i) {
+                array.push(i);
+            });
+
+            functions.push(function (x) { return x+x; });
+
+            applicated = Applicative.applicate(functions, array);
+            assert.equal(applicated.length, 2);
+
+            assert.equal(applicated[0][0], 1);
+            assert.equal(applicated[0][1], 4);
+            assert.equal(applicated[0][2], 9);
+            assert.equal(applicated[0][3], 12);
+            assert.equal(applicated[0][4], 25);
+
+            assert.equal(applicated[1][0], 2);
+            assert.equal(applicated[1][1], 4);
+            assert.equal(applicated[1][2], 6);
+            assert.equal(applicated[1][3], 8);
+            assert.equal(applicated[1][4], 10);
+
+        });
     });
 });
 
