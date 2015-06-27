@@ -9,6 +9,19 @@ function List() {
     this.next;
 }
 
+List.prototype = new Functor();
+
+List.prototype.fmap = function (fn) {
+    this.node = fn(this.node);
+
+    if(this.next) {
+        this.next = this.next.fmap(fn);
+        return this;
+    } else {
+        return this;
+    }
+};
+
 function Tree() {
     this.node;
     this.left;
@@ -21,7 +34,11 @@ function Graph() {
 }
 
 module.exports.newList = function (item, next) {
-    throw new Error("Not Implemented");
+    var list = new List();
+    list.node = item;
+    list.next = next;
+
+    return list;
 }
 
 module.exports.newTree = function (node, left, right) {
@@ -33,8 +50,9 @@ module.exports.newGraph = function (node, vertices) {
 };
 
 /* This function should link a node to a list */
-module.exports.link = function () {
-    throw new Error("Not Implemented");
+module.exports.link = function (list, node) {
+    list.next = node;
+    return list;
 };
 
 /* Connects subtrees to a tree */
@@ -65,3 +83,15 @@ module.exports.fmap = function (fn, a) {
 module.exports.Graph = Graph;
 module.exports.Tree = Tree;
 module.exports.List = List;
+module.exports.Functor = Functor;
+
+// Test
+
+var list2 = module.exports.newList(5),
+    list1 = module.exports.newList(10, list2);
+
+var res = list1.fmap(function (i) {
+    return i*2;
+});
+
+console.log(res);

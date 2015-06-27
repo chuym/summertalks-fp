@@ -21,4 +21,4 @@ function collatz(n) {
     }
 }
 
-module.exports = collatz;
+module.exports = collatz; 
