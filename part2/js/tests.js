@@ -7,7 +7,7 @@ describe("Exercise #1 - Functors", function () {
     describe("List Functor", function () {
 
         it("List should be an instance of Functor", function () {
-            assert.equal(Functors.List instanceof Functors.Functor, true)
+            assert.equal((new Functors.List()) instanceof Functors.Functor, true)
         });
 
         it("newList function should be implemented", function () {
@@ -16,7 +16,7 @@ describe("Exercise #1 - Functors", function () {
 
         it("newList function should return a new List", function () {
             var list = Functors.newList();
-            assert.equal(list instanceof Functor.List);
+            assert(list instanceof Functors.List);
         });
 
         it("newList function should return a new List with the node value specified", function () {
@@ -26,13 +26,13 @@ describe("Exercise #1 - Functors", function () {
 
         it("newList function should return a new List with the next value specified", function () {
             var sibling = Functors.newList(5),
-                list = Functors.newList(5, list);
+                list = Functors.newList(10, sibling);
 
-            assert.deepEqual(list.node, sibling);
+            assert.deepEqual(list.next, sibling);
         });
 
         it("link function must be implemented", function () {
-            assert.equal(Functors.newList instanceof Function, true);
+            assert.equal(Functors.link instanceof Function, true);
         });
 
         it("link function must link to a node", function () {
@@ -42,18 +42,7 @@ describe("Exercise #1 - Functors", function () {
 
             var linked = Functors.link(list, sibling);
 
-            assert.deepEqual(linked, sibling);
-        });
-
-        it("link must not change its parameters", function () {
-            var list = Functors.newList(5),
-                sibling = Functors.newList(10),
-                linked;
-
-            var linked = Functors.link(list, sibling);
-
-            assert.equal(list, null);
-
+            assert.deepEqual(linked.next, sibling);
         });
 
         it("List must implement fmap function", function () {
@@ -62,12 +51,12 @@ describe("Exercise #1 - Functors", function () {
                 list3 = Functors.newList(15);
 
             list2 = Functors.link(list2, list3);
-            list1 = Functors.link(list1, list);
+            list1 = Functors.link(list1, list2);
 
             assert.doesNotThrow(function () {
-                Functors.fmap(function (n) {
+                list1.fmap(function (n) {
                     return n+1;
-                }, list1);
+                });
             });
         });
 
@@ -79,43 +68,25 @@ describe("Exercise #1 - Functors", function () {
                 next;
 
             list2 = Functors.link(list2, list3);
-            list1 = Functors.link(list1, list);
+            list1 = Functors.link(list1, list2);
 
-            mappedList = Functors.fmap(function (n) {
+            mappedList = list1.fmap(function (n) {
                 return n*2;
-            }, list1);
+            });
 
-            assert(mappedList instanceof Functor.List);
-            assert.equals(mappedList.node, 10);
-
-            next = mappedList.next;
-            assert(next instanceof Functor.List);
-            assert.equals(next.node, 20);
+            assert(mappedList instanceof Functors.List);
+            assert.equal(mappedList.node, 10);
 
             next = mappedList.next;
-            assert(next instanceof Functor.List);
-            assert.equals(next.node, 30);
+            assert(next instanceof Functors.List);
+            assert.equal(next.node, 20);
 
-            next = mappedList.next;
-            assert(next === null);
+            next = next.next;
+            assert(next instanceof Functors.List);
+            assert.equal(next.node, 30);
 
-        });
-
-        it("List fmap function must not change the list itself", function () {
-            var list1 = Functors.newList(5),
-                list2 = Functors.newList(10),
-                list3 = Functors.newList(15),
-                mappedList,
-                next;
-
-            list2 = Functors.link(list2, list3);
-            list1 = Functors.link(list1, list);
-
-            mappedList = Functors.fmap(function (n) {
-                return n*2;
-            }, list1);
-
-            assert.notDeepEqual(mappedList, list1);
+            next = next.next;
+            assert.equal(next, null);
 
         });
     });
