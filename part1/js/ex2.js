@@ -8,8 +8,17 @@
  * If the number is odd, then multiplty by 3 and add one, calculate the next number in 
  * the sequence.
  */
+// (Num a, Eq a) => a -> [a]
 function collatz(n) {
-    throw new Error("Not implemented!");
+    if(n === 1) {
+        return [1];
+    }
+
+    if(n % 2 === 0) {
+        return [n].concat(collatz(n / 2));
+    } else {
+        return [n].concat(collatz((n*3) + 1));
+    }
 }
 
 module.exports = collatz;
