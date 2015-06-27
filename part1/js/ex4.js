@@ -1,3 +1,8 @@
+function compose(sndFn, fstFn) {
+    return function (a) {
+        return sndFn(fstFn(a));
+    }
+}
 // (Ord b) => [(a, b)] -> [(a, b)]
 function quicksortBySnd(list) {
     if(list.length === 0) {
@@ -73,6 +78,20 @@ function sumtotalmatrix(matrix) {
         }, 0);
     }, 0);
 }
+
+// [[a]] -> ([[a]], Int)
+function tuplematrixsum(matrix) {
+    return [matrix, sumtotalmatrix(matrix)]
+}
+
+// [[[a]]] -> [([[a]], Int]
+
+function totuplematrixsum(matrices) {
+    return matrices.map(function (matrix) {
+        return tuplematrixsum(matrix);
+    });
+}
+
 /*
  * Find the largest submatrix in a matrix
  * The numbers can go from -100 to 100
@@ -83,10 +102,9 @@ function sumtotalmatrix(matrix) {
 
 // [[a]] -> [[a]]
 function largestSubmatrix(matrix) {
-    var submatrices = quicksortBySnd(submatricesfor(matrix).map(function(submatrix) {
-        var res = [submatrix, sumtotalmatrix(submatrix)];
-        return res;
-    }));
+    var submatricesAsTuple = compose(totuplematrixsum, submatricesfor);
+    var sortSubmatricesAsTuples = compose(quicksortBySnd, submatricesAsTuple);
+    var submatrices = sortSubmatricesAsTuples(matrix);
 
     return submatrices.pop()[0];
 }
