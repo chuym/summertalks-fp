@@ -94,7 +94,7 @@ describe("Exercise #1 - Functors", function () {
     describe("Tree Functor", function () {
 
         it("Tree should be an instance of Functor", function () {
-            assert.equal(Functors.Tree instanceof Functors.Functor, true)
+            assert.equal((new Functors.Tree()) instanceof Functors.Functor, true)
         });
 
         it("newTree must be implemented", function () {
@@ -103,7 +103,7 @@ describe("Exercise #1 - Functors", function () {
 
         it("newTree function should return a new Tree", function () {
             var tree = Functors.newTree();
-            assert.equal(list instanceof Functor.Tree);
+            assert(tree instanceof Functors.Tree);
         });
 
         it("newTree function should return a new Tree with the node value specified", function () {
@@ -152,18 +152,6 @@ describe("Exercise #1 - Functors", function () {
 
         });
 
-        it("connect must not change its parameters", function () {
-            var tree = Functors.newTree(5),
-                left = Functors.newTree(10),
-                right = Functors.newTree(-10),
-                modTree;
-
-            modTree = Functors.connect(tree, left, right);
-
-            assert.notDeepEqual(tree, modTree);
-
-        });
-
         it("Tree must implement fmap function", function () {
             var rightGrandChild2 = Functors.newTree(100),
                 rightGrandChild1 = Functors.newTree(10),
@@ -173,9 +161,9 @@ describe("Exercise #1 - Functors", function () {
                 tree = Functors.newList(5, left, right);
 
             assert.doesNotThrow(function () {
-                Functors.fmap(function (n) {
+                tree.fmap(function (n) {
                     return n+1;
-                }, tree);
+                });
             });
 
         });
@@ -184,13 +172,13 @@ describe("Exercise #1 - Functors", function () {
             var rightGrandChild2 = Functors.newTree(100),
                 rightGrandChild1 = Functors.newTree(10),
                 rightChild = Functors.newTree(20, rightGrandChild1, rightGrandChild2),
-                right = Functors.newList(15, rightChild),
-                left = Functors.newList(10),
-                tree = Functors.newList(5, left, right);
+                right = Functors.newTree(15, rightChild),
+                left = Functors.newTree(10),
+                tree = Functors.newTree(5, left, right);
 
-            tree = Functors.fmap(function (n) {
+            tree = tree.fmap(function (n) {
                 return n+1;
-            }, tree);
+            });
 
             assert.equal(tree.node, 6);
             assert.equal(tree.left.node, 11);
@@ -200,23 +188,6 @@ describe("Exercise #1 - Functors", function () {
             assert.equal(tree.right.left.right.node, 101);
 
         });
-
-        it("Tree fmap function must not change the list itself", function () {
-            var rightGrandChild2 = Functors.newTree(100),
-                rightGrandChild1 = Functors.newTree(10),
-                rightChild = Functors.newTree(20, rightGrandChild1, rightGrandChild2),
-                right = Functors.newList(15, rightChild),
-                left = Functors.newList(10),
-                tree = Functors.newList(5, left, right),
-                modTree;
-
-            modTree = Functors.fmap(function (n) {
-                return n+1;
-            }, tree);
-
-            assert.notDeepEqual(modTree, tree);
-        });
-
     });
 
 });
@@ -224,55 +195,53 @@ describe("Exercise #1 - Functors", function () {
 describe("Exercise #2 - Applicative Functors", function () {
     describe("List Applicative Functor", function () {
         it("List should be an instance of Functor", function () {
-            assert.equal(Functors.List instanceof Functors.Functor, true)
-        });
-
-        it("List should be an instance of Applicative", function () {
-            assert.equal(Functors.List instanceof Applicatives.Applicative, true)
+            assert.equal((new Applicatives.List()) instanceof Functors.List, true)
         });
 
         it("List should implement pure", function () {
-            assert.doesNotThrow(Applicative.List.pure);
+            assert.doesNotThrow(Applicatives.List.pure);
         });
 
         it("A list should be returned by pure.", function () {
-            var pure = Applicative.List.pure(function () { console.log("Hello World!"); });
+            var pure = Applicatives.List.pure(function () { console.log("Hello World!"); });
             assert(pure instanceof Applicatives.List);
         });
 
         it("applicate function should be implemented", function () {
-            var list = Applicative.List.pure(1),
-                square = Applicative.List.pure(function (x) { return x*x; });
+            var list = Applicatives.List.pure(1),
+                square = Applicatives.List.pure(function (x) { return x*x; });
 
-            assert.doesNotThrow(Applicative.applicate(square, list));
+            assert(square.applicate instanceof Function);
         });
 
         it("applicate function should create a new list with each item of the provided list applied with the applicative list functions", function () {
-            var list = Applicative.List.pure(1),
-                square = Applicative.List.pure(function (x) { return x*x; }),
+            var list = Applicatives.List.pure(1),
+                square = Applicatives.List.pure(function (x) { return x*x; }),
                 applicated,
                 next;
 
-            list = [2,3,4,5].map(function (i) {
-                return Appicative.List.pure(i);
-            }).reduce(function (previous, current) {
-                return Functor.link(previous, current);
-            }, list);
+            applicativeList = [2,3,4,5].map(function (i) {
+                return Applicatives.List.pure(i);
+            });
+            Functors.link(applicativeList[2], applicativeList[3]);
+            Functors.link(applicativeList[1], applicativeList[2]);
+            Functors.link(applicativeList[0], applicativeList[1]);
+            Functors.link(list, applicativeList[0]);
 
-            applicated = Applicative.applicate(square, list);
+            applicated = square.applicate(list);
 
             assert.equal(applicated.next, null);
-            assert(applicated.node instanceof Applicated.List);
+            assert(applicated.node instanceof Functors.List);
             assert.equal(applicated.node.node, 1);
 
-            next = next.next;
+            next = applicated.node.next
             assert.equal(next.node, 4);
 
             next = next.next;
             assert.equal(next.node, 9);
 
             next = next.next;
-            assert.equal(next.node, 12);
+            assert.equal(next.node, 16);
 
             next = next.next;
             assert.equal(next.node, 25);
@@ -280,25 +249,27 @@ describe("Exercise #2 - Applicative Functors", function () {
         });
 
         it("applicate function should create a new list with each item of the provided list applied with the applicative list with multiple functions", function () {
-            var list = Applicative.List.pure(1),
-                twice = ApplicativeList.pure(function (x) { return x*2 }),
-                square = Applicative.List.pure(function (x) { return x*x; }),
+            var list = Applicatives.List.pure(1),
+                twice = Applicatives.List.pure(function (x) { return x*2 }),
+                square = Applicatives.List.pure(function (x) { return x*x; }),
                 applicated,
                 applicatedNext,
                 next;
 
-            functions = Functor.link(square, twice);
+            functions = Functors.link(square, twice);
 
-            list = [2,3,4,5].map(function (i) {
-                return Appicative.List.pure(i);
-            }).reduce(function (previous, current) {
-                return Functor.link(previous, current);
-            }, list);
+            applicativeList = [2,3,4,5].map(function (i) {
+                return Applicatives.List.pure(i);
+            });
+            Functors.link(applicativeList[2], applicativeList[3]);
+            Functors.link(applicativeList[1], applicativeList[2]);
+            Functors.link(applicativeList[0], applicativeList[1]);
+            Functors.link(list, applicativeList[0]);
 
-            applicated = Applicative.applicate(functions, list);
+            applicated = functions.applicate(list);
 
-            assert(applicated.node instanceof Applicated.List);
-            assert(applicated.node.next instanceof Applicated.List);
+            assert(applicated.node instanceof Applicatives.List);
+            assert(applicated.node.next instanceof Applicatives.List);
 
             assert.equal(applicated.node.node, 1);
 

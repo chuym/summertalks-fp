@@ -28,6 +28,22 @@ function Tree() {
     this.right;
 }
 
+Tree.prototype = new Functor();
+
+Tree.prototype.fmap = function (fn) {
+    this.node = fn(this.node);
+
+    if(this.left) {
+        this.left = this.left.fmap(fn);
+    }
+
+    if(this.right) {
+        this.right = this.right.fmap(fn);
+    }
+
+    return this;
+}
+
 function Graph() {
     this.node;
     this.vertices;
@@ -42,7 +58,12 @@ module.exports.newList = function (item, next) {
 }
 
 module.exports.newTree = function (node, left, right) {
-    throw new Error("Not Implemented");
+    var tree = new Tree();
+    tree.node = node;
+    tree.left = left;
+    tree.right = right;
+
+    return tree;
 };
 
 module.exports.newGraph = function (node, vertices) {
@@ -56,8 +77,11 @@ module.exports.link = function (list, node) {
 };
 
 /* Connects subtrees to a tree */
-module.exports.connect = function () {
-    throw new Error("Not Implemented");
+module.exports.connect = function (tree, left, right) {
+    tree.left = left;
+    tree.right = right;
+
+    return tree;
 };
 
 /* Adds a single edge to a vertex */
@@ -84,14 +108,3 @@ module.exports.Graph = Graph;
 module.exports.Tree = Tree;
 module.exports.List = List;
 module.exports.Functor = Functor;
-
-// Test
-
-var list2 = module.exports.newList(5),
-    list1 = module.exports.newList(10, list2);
-
-var res = list1.fmap(function (i) {
-    return i*2;
-});
-
-console.log(res);
